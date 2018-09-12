@@ -5,6 +5,7 @@ namespace Bolt\Extension\MichaelMezger\SlugRouting\Controller;
 use Silex;
 use Silex\Application;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class Frontend extends \Bolt\Controller\Frontend
 {

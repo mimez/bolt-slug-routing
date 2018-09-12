@@ -5,6 +5,7 @@ namespace Bolt\Extension\MichaelMezger\SlugRouting;
 use Silex\Application;
 use Bolt\Extension\SimpleExtension;
 use Symfony\Component\HttpFoundation\Request;
+use Bolt\Extension\MichaelMezger\SlugRouting\Slugify\Slugify;
 
 /**
  * ExtensionName extension class.
@@ -21,24 +22,8 @@ class SlugRoutingExtension extends SimpleExtension
             }
         );
 
-
-        return;
-        $app->before(function(Request $request) use ($app) {
-
-            $slug = ltrim($_SERVER['REQUEST_URI'], '/');
-            //$slug = ltrim($request->getPathInfo(), '/');
-            $contentTypes = $app['config']->get('contenttypes');
-
-            foreach ($contentTypes as $name => $contentType) {
-                $stmt = $app['db']->executeQuery(sprintf("SELECT id, slug FROM bolt_%s WHERE slug = :slug", $contentType['tablename']), array('slug' => $slug));
-                if ($content = $stmt->fetch()) {
-                    $request->server->set('REQUEST_URI', sprintf('/%s/%s', $contentType['slug'], $slug));
-
-                    return;
-                }
-            }
-
-            $request->server->set('REQUEST_URI', sprintf('/%s/%s', 'notfound', $slug));
-        }, Application::EARLY_EVENT);
+        $app['slugify'] = $app->share(function() {
+            return new Slugify();
+        });
     }
 }
